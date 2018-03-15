@@ -1,10 +1,13 @@
+// maze
+
+
 #define PWM1  6
 #define YON1  7
 #define PWM2  5                         
 #define YON2  4  
 #define ILERI HIGH
 #define GERI LOW
-                         
+   
 int sensorpin =0;                 // analog pin used to connect the sharp sensor
 int onMesafe = 0;                 // variable to store the values from sensor(initially zero)
 
