@@ -13,7 +13,7 @@ bool onduvar;
 bool arkaduvar;
 int  referans;
 };
-class Hareket{
+class Hareket : public Sensor{
 
 public:
 void ilerigit();
