@@ -57,33 +57,11 @@ void setup(){
 }
 
 void loop(){
-  d_sol=S1.distance()-8;
-  d_sag=S3.distance()-8;
   cosku_sol=150;
-  cosku_sag=200;
- /* Serial.println("sag");
-  Serial.println(d_sag);
-  Serial.println("sol");
-  Serial.println(d_sol);
-  Serial.println("-----------");*/
- // int tik2cm=2;
-  //int istenen_konum = 19; // CM CINSINDEN
-  //int ref = istenen_konum / tik2cm; // encoder tık cınsınden
-  float P = 3;
-  
-    if(mesafe_hata(d_sol,d_sag) > 1){
-    cosku_sol = cosku_sol - P * ( mesafe_hata(d_sol,d_sag) );
-    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
-    } 
-    else if(mesafe_hata(d_sol,d_sag) < -1){
-    cosku_sag = cosku_sag  - P * ( mesafe_hata(d_sag,d_sol) );
-    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
-    }
-    else{  
-    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
-    }
-    delay(50);
-
+cosku_sag=200;
+sagadon(yon_sol,yon_sag, cosku_sol,cosku_sag);
+dur();
+delay(2000);
  }
 
 
@@ -122,7 +100,8 @@ void soladon(int solyon,int sagyon,int solcosku,int sagcosku){
 
   analogWrite(SOLHIZ, 0);
   analogWrite(SAGHIZ, sagcosku);
-  delay(55);
+  delay(370);
+  
 }
 
 void sagadon(int solyon,int sagyon,int solcosku,int sagcosku){
@@ -131,7 +110,8 @@ void sagadon(int solyon,int sagyon,int solcosku,int sagcosku){
   digitalWrite(SAGM, sagyon);
 
   analogWrite(SOLHIZ, solcosku);
-  analogWrite(SAGHIZ, sagcosku);
+  analogWrite(SAGHIZ, 0);
+  delay(385);
 }
   
 
