@@ -1,13 +1,22 @@
-#define SOLHIZ  6
-#define SOLM  7
+#define SAGHIZ  6
+#define SAGM 7 
 
-#define SAGHIZ  5                         
-#define SAGM  4  
+#define SOLHIZ  5
+#define SOLM 4
 
 #define ILERI HIGH
 #define GERI LOW
 
-void ilerigit();
+#include "QTRSensors.h"
+#include "SharpIR.h"
+
+#include <stdlib.h>
+#include <Arduino.h>
+
+SharpIR S1(A0,1080); //sol
+SharpIR S2(A2,1080);
+SharpIR S3(A1,1080);//sag
+
 
 struct Konum{
 int  x;
@@ -19,53 +28,132 @@ bool arkaduvar;
 int  referans;
 };
 
+int sayac=0;
+
 int sensorpin =0;                 // analog pin used to connect the sharp sensor
 int onMesafe = 0;                 // variable to store the values from sensor(initially zero)
+int cosku_sol=150;
+int cosku_sag=200;
+int on_uz=0;
+int sag_uz=0;
+int sol_uz=0;
+int yon_sol=HIGH,yon_sag=HIGH;
+int d_sol,d_sag;
+
+const byte interruptPin_sag = 3;
+const byte interruptPin_sol = 2; 
+volatile long sol_tik = 0;
+volatile long sag_tik = 0;
 
 
-void setup() 
-{ 
-    Serial.begin(9600);               // starts the serial monitor
-    pinMode(YON1, OUTPUT);   
-    pinMode(YON2, OUTPUT); 
-} 
-
-void loop() 
-{ 
-  int value;
-  int yon;
-  
-  onMesafe = analogRead(sensorpin);
-  int ref = 350;
- 
-
-  int P = 2;
-  int hata = ref - onMesafe;
-  int cosku = P*hata;
-
-  if(cosku <0){
-    yon = GERI;
-    cosku = -cosku;
-  }
-  else{
-    yon = ILERI;
-  }
-
-  if(cosku > 255) cosku = 255;
-  
-  digitalWrite(SOLM, yon);
-  digitalWrite(SAGM, yon);
-
-  analogWrite(SOLHIZ, cosku);
-  analogWrite(SAGHIZ, cosku);
-  
-
- // sensor read 
- // filtreleme
-  Serial.println(onMesafe);            // prints the value of the sensor to the serial monitor
-  delay(400);                    // wait for this much time before printing next value  
+void setup(){
+  pinMode(SOLM, OUTPUT);            // Sol motor
+  pinMode(SAGM, OUTPUT);            // Sag motor
+  pinMode(interruptPin_sag, INPUT_PULLUP);
+  pinMode(interruptPin_sol, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin_sag), enc_tik_sag, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(interruptPin_sol), enc_tik_sol, CHANGE);
+  Serial.begin(9600);
 }
-/* */
-void ilerigit(){
 
+void loop(){
+  d_sol=S1.distance()-8;
+  d_sag=S3.distance()-8;
+  cosku_sol=150;
+  cosku_sag=200;
+ /* Serial.println("sag");
+  Serial.println(d_sag);
+  Serial.println("sol");
+  Serial.println(d_sol);
+  Serial.println("-----------");*/
+ // int tik2cm=2;
+  //int istenen_konum = 19; // CM CINSINDEN
+  //int ref = istenen_konum / tik2cm; // encoder tık cınsınden
+  float P = 3;
+  
+    if(mesafe_hata(d_sol,d_sag) > 1){
+    cosku_sol = cosku_sol - P * ( mesafe_hata(d_sol,d_sag) );
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    } 
+    else if(mesafe_hata(d_sol,d_sag) < -1){
+    cosku_sag = cosku_sag  - P * ( mesafe_hata(d_sag,d_sol) );
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    }
+    else{  
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    }
+    delay(50);
+
+ }
+
+
+void enc_tik_sag() {
+  if(yon_sag == ILERI) {sag_tik++;}
+  else {sag_tik--;}}
+
+void enc_tik_sol() {
+  if(yon_sol == ILERI) {sol_tik++;}
+  else {sol_tik--;} }
+  
+
+void dur(){ // Parametre almıyor
+  digitalWrite(SOLM, HIGH);
+  digitalWrite(SAGM, HIGH);
+
+  analogWrite(SOLHIZ, 0);
+  analogWrite(SAGHIZ, 0);
+}
+
+void ilerigit(int solyon,int sagyon,int solcosku,int sagcosku){
+  
+  digitalWrite(SOLM, solyon);
+  digitalWrite(SAGM, sagyon);
+
+  analogWrite(SOLHIZ, solcosku);
+  analogWrite(SAGHIZ, sagcosku);
+  delay(55);
+  dur();
+  delay(55);
+}
+void soladon(int solyon,int sagyon,int solcosku,int sagcosku){
+         
+  digitalWrite(SOLM, solyon);
+  digitalWrite(SAGM, sagyon);
+
+  analogWrite(SOLHIZ, 0);
+  analogWrite(SAGHIZ, sagcosku);
+  delay(55);
+}
+
+void sagadon(int solyon,int sagyon,int solcosku,int sagcosku){
+         
+  digitalWrite(SOLM, solyon);
+  digitalWrite(SAGM, sagyon);
+
+  analogWrite(SOLHIZ, solcosku);
+  analogWrite(SAGHIZ, sagcosku);
+}
+  
+
+
+int mesafe_hata(int dist1, int dist2){
+ int hata = dist1-dist2;
+  return hata;
+}
+
+bool on(){
+  on_uz = S1.distance();
+  if(on_uz>4)return false;
+  else return true;
+  
+}
+bool sag(){
+  sag_uz = S2.distance();
+  if(sag_uz>4)return false;
+  else return true;
+}
+bool sol(){
+  sol_uz = S3.distance();
+  if(sol_uz>4)return false;
+  else return true;
 }
