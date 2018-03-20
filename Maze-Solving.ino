@@ -71,7 +71,7 @@ void loop(){
   //int istenen_konum = 19; // CM CINSINDEN
   //int ref = istenen_konum / tik2cm; // encoder tık cınsınden
   float P = 3;
-  if( sagbos(d_sag)  ){
+  if( sagbos(d_sag) ){
     sagadon(yon_sol, yon_sag, cosku_sol, cosku_sag);
   }
   
@@ -163,12 +163,12 @@ bool on(){
   
 }
 bool sagbos(int sag_uz){
-  sag_uz = S2.distance();
   if(sag_uz>8)return true;
-  else return false;
+  else{
+    return false;
+  }
 }
 bool solbos(int sol_uz){
-  sol_uz = S3.distance();
   if(sol_uz>8)return true;
   else return false;
 }
