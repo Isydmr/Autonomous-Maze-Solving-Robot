@@ -35,10 +35,16 @@ int  referans;
                 // variable to store the values from sensor(initially zero)
 int cosku_sol=170;
 int cosku_sag=235;
-int yon_sol=HIGH,yon_sag=HIGH;
+byte yon_sol=HIGH,yon_sag=HIGH;
 int d_sol,d_sag,d_on;
 int istikamet;
 int oncelik = 0;
+Konum maze[32][32];
+//MAZE MATRİSİ OLUŞTURMAK İÇİN GEREKEN BİLEŞENLER
+int x = 16,y = 16; // YENİ GİRDİ İÇİN GEREKLİ KONUM BİLGİSİ
+bool dogrultu = 1; // x ve y apsisleri, 1 ön tanımlı x, 0 ön tanımlı y
+bool yon = 1;       // + ve - yönü, 1 ön tanımlı pozitif, 0 ön tanımlı negatif   
+int sagdonus = 0;  
 
 
 
@@ -52,7 +58,29 @@ void setup(){
 void loop(){
 
   yon_sol=HIGH; yon_sag=HIGH;
-  
+
+  dur(20);
+   if(dogrultu && yon){   //başlangıç pozisyonu
+        dur(20);
+        maze[x][y].onduvar = !onbos();
+        maze[x][y].sagduvar = !sagbos();
+        maze[x][y].solduvar = !solbos();
+  }else if(dogrultu && !yon){     //başlangıca göre arkasına dönmüş
+        dur(20);
+        maze[x][y].arkaduvar = !onbos();
+        maze[x][y].solduvar = !sagbos();
+        maze[x][y].sagduvar = !solbos();
+  }else if(!dogrultu && yon){       //başlangica göre saga dönmüş
+        dur(20);
+        maze[x][y].sagduvar = !onbos();
+        maze[x][y].arkaduvar = !sagbos();
+        maze[x][y].onduvar = !solbos();
+  }else {                           //başlangıca göre sola dönmüş
+        dur(20);
+        maze[x][y].solduvar = !onbos();
+        maze[x][y].onduvar = !sagbos();
+        maze[x][y].arkaduvar = !solbos();
+      }
   //ONCELİK DGİSKENİ ONTANIMLI 0 DGERİ ALIR SAG ONCELİKLİ
   switch(oncelik%6){
   case 0 :  
@@ -127,15 +155,32 @@ void loop(){
 switch(istikamet){
   case DUZGIT :
       duz_git(100);
+      mazepositionupdater();
   break;
   case SOLADON :
       soladon();
+      sagdonus--;
+      dogrultu = !dogrultu;
+      if(sagdonus%2 == 1){
+        yon = !yon;
+      }
+      duz_git(100);
+      mazepositionupdater();
   break;
   case SAGADON :
       sagadon();
+      sagdonus++;
+      dogrultu = !dogrultu;
+      if(sagdonus%2 == 0){
+        yon = !yon;
+      }
+      duz_git(100);
+      mazepositionupdater();
   break;
   case GERIDON :
       geridon();
+      yon = !yon;
+      dugumedon();
   break;
   }
 
@@ -275,5 +320,22 @@ Serial.print("On:");
 Serial.println(d_on);
 Serial.println("-----------");
 
+void mazepositionupdater(){
+  if(dogrultu && yon){
+        x++;
+       maze[x][y].arkaduvar = false;
+  }else if(dogrultu && !yon){
+        x--;
+        maze[x][y].onduvar = false;
+  }else if(!dogrultu && yon){
+        y++;
+        maze[x][y].solduvar = false;
+  }else {
+        y--;
+        maze[x][y].sagduvar = false;
+      }
 }
 
+void dogumedon(){
+  
+}
