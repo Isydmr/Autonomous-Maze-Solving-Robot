@@ -54,7 +54,7 @@ void loop(){
   yon_sol=HIGH; yon_sag=HIGH;
   
   //ONCELİK DGİSKENİ ONTANIMLI 0 DGERİ ALIR SAG ONCELİKLİ
-  switch(oncelik%2){
+  switch(oncelik%6){
   case 0 :  
       if(onbos()){
         istikamet = DUZGIT;
@@ -73,6 +73,50 @@ void loop(){
         istikamet = SOLADON;
       }else if(sagbos()){
         istikamet = SAGADON;
+      }else{
+        istikamet = GERIDON;
+      }
+  break;
+      case 2:
+      if(solbos()){
+        istikamet = SOLADON;
+      }else if(onbos()){
+        istikamet = DUZGIT;
+      }else if(sagbos()){
+        istikamet = SAGADON;
+      }else{
+        istikamet = GERIDON;
+      }
+  break;
+      case 3:
+      if(solbos()){
+        istikamet = SOLADON ;
+      }else if(sagbos()){
+        istikamet = SAGADON;
+      }else if(onbos()){
+        istikamet = DUZGIT;
+      }else{
+        istikamet = GERIDON;
+      }
+  break;
+      case 4:
+      if(sagbos()){
+        istikamet = SAGADON;
+      }else if(solbos()){
+        istikamet = SOLADON;
+      }else if(onbos()){
+        istikamet = DUZGIT;
+      }else{
+        istikamet = GERIDON;
+      }
+  break;
+      case 5:
+      if(sagbos()){
+        istikamet =SAGADON ;
+      }else if(onbos()){
+        istikamet = DUZGIT;
+      }else if(solbos()){
+        istikamet = SOLADON;
       }else{
         istikamet = GERIDON;
       }
