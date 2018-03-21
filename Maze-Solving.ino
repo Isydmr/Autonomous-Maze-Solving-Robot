@@ -57,11 +57,46 @@ void setup(){
 }
 
 void loop(){
+  d_sol=S1.distance()-8;
+   d_sag=S3.distance()-8;
+   yon_sol=HIGH; yon_sag=HIGH;
   cosku_sol=150;
-cosku_sag=200;
-sagadon(yon_sol,yon_sag, cosku_sol,cosku_sag);
-dur();
-delay(2000);
+  cosku_sag=200;
+ /* Serial.println("sag");
+  Serial.println(d_sag);
+  Serial.println("sol");
+  Serial.println(d_sol);
+  Serial.println("-----------");*/
+ // int tik2cm=2;
+  //int istenen_konum = 19; // CM CINSINDEN
+  //int ref = istenen_konum / tik2cm; // encoder tık cınsınden
+  float P = 3;
+  if( sagbos(d_sag) ){
+    sagadon(yon_sol, yon_sag, cosku_sol, cosku_sag);
+  }
+  
+  for(int i=0;i<8;i++){
+     d_sol=S1.distance()-8;
+     d_sag=S3.distance()-8;
+    yon_sol=HIGH; yon_sag=HIGH;
+    cosku_sol=150;
+  cosku_sag=200;
+    if(mesafe_hata(d_sol,d_sag) > 1){
+    cosku_sol = cosku_sol - P * ( mesafe_hata(d_sol,d_sag) );
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    } 
+    else if(mesafe_hata(d_sol,d_sag) < -1){
+    cosku_sag = cosku_sag  - P * ( mesafe_hata(d_sag,d_sol) );
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    }
+    else{  
+    ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
+    }
+    delay(50);
+  }
+
+    delay(1000);
+
  }
 
 
@@ -69,7 +104,7 @@ void enc_tik_sag() {
   if(yon_sag == ILERI) {sag_tik++;}
   else {sag_tik--;}}
 
-void enc_tik_sol() {
+void enc_tik_sol() { 
   if(yon_sol == ILERI) {sol_tik++;}
   else {sol_tik--;} }
   
@@ -105,13 +140,13 @@ void soladon(int solyon,int sagyon,int solcosku,int sagcosku){
 }
 
 void sagadon(int solyon,int sagyon,int solcosku,int sagcosku){
-         
   digitalWrite(SOLM, solyon);
   digitalWrite(SAGM, sagyon);
 
   analogWrite(SOLHIZ, solcosku);
   analogWrite(SAGHIZ, 0);
   delay(385);
+
 }
   
 
@@ -127,13 +162,13 @@ bool on(){
   else return true;
   
 }
-bool sag(){
-  sag_uz = S2.distance();
-  if(sag_uz>4)return false;
-  else return true;
+bool sagbos(int sag_uz){
+  if(sag_uz>8)return true;
+  else{
+    return false;
+  }
 }
-bool sol(){
-  sol_uz = S3.distance();
-  if(sol_uz>4)return false;
-  else return true;
+bool solbos(int sol_uz){
+  if(sol_uz>8)return true;
+  else return false;
 }
