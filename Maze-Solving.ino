@@ -17,7 +17,6 @@ SharpIR S1(A0,1080); //sol
 SharpIR S2(A2,1080);
 SharpIR S3(A1,1080);//sag
 
-
 struct Konum{
 int  x;
 int  y; 
@@ -38,7 +37,7 @@ int on_uz=0;
 int sag_uz=0;
 int sol_uz=0;
 int yon_sol=HIGH,yon_sag=HIGH;
-int d_sol,d_sag;
+int d_sol,d_sag,d_on;
 
 const byte interruptPin_sag = 3;
 const byte interruptPin_sol = 2; 
@@ -57,20 +56,38 @@ void setup(){
 }
 
 void loop(){
+  
   d_sol=S1.distance()-8;
   d_sag=S3.distance()-8;
+  d_on =S2.distance()-9;
+  yon_sol=HIGH; yon_sag=HIGH;
+  
   cosku_sol=150;
   cosku_sag=200;
- /* Serial.println("sag");
-  Serial.println(d_sag);
-  Serial.println("sol");
+    Serial.print("sol:");
+
   Serial.println(d_sol);
-  Serial.println("-----------");*/
- // int tik2cm=2;
+  Serial.print("sag:");
+
+    Serial.println(d_sag);
+  Serial.println("-----------");
+  //int tik2cm=2;
   //int istenen_konum = 19; // CM CINSINDEN
   //int ref = istenen_konum / tik2cm; // encoder tık cınsınden
   float P = 3;
-  
+  if( sagbos(d_sag) ){
+    sagadon(yon_sol, yon_sag, cosku_sol, cosku_sag);
+  }
+  else if( solbos(d_sol)&& !sagbos(d_sag)  ){
+    soladon(yon_sol, yon_sag, cosku_sol, cosku_sag);
+  }
+ //delay(150);
+    for(int i=0;i<8;i++){
+     d_sol=S1.distance()-8;
+     d_sag=S3.distance()-8;
+    yon_sol=HIGH; yon_sag=HIGH;
+    cosku_sol=150;
+    cosku_sag=200;
     if(mesafe_hata(d_sol,d_sag) > 1){
     cosku_sol = cosku_sol - P * ( mesafe_hata(d_sol,d_sag) );
     ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
@@ -83,6 +100,9 @@ void loop(){
     ilerigit(yon_sol, yon_sag, cosku_sol, cosku_sag);
     }
     delay(50);
+  }
+
+    //delay(1000);
 
  }
 
@@ -91,7 +111,7 @@ void enc_tik_sag() {
   if(yon_sag == ILERI) {sag_tik++;}
   else {sag_tik--;}}
 
-void enc_tik_sol() {
+void enc_tik_sol() { 
   if(yon_sol == ILERI) {sol_tik++;}
   else {sol_tik--;} }
   
@@ -122,38 +142,38 @@ void soladon(int solyon,int sagyon,int solcosku,int sagcosku){
 
   analogWrite(SOLHIZ, 0);
   analogWrite(SAGHIZ, sagcosku);
-  delay(55);
+  delay(370);
+  
 }
 
 void sagadon(int solyon,int sagyon,int solcosku,int sagcosku){
-         
   digitalWrite(SOLM, solyon);
   digitalWrite(SAGM, sagyon);
 
   analogWrite(SOLHIZ, solcosku);
-  analogWrite(SAGHIZ, sagcosku);
-}
-  
+  analogWrite(SAGHIZ, 0);
+  delay(365);
 
+}
 
 int mesafe_hata(int dist1, int dist2){
  int hata = dist1-dist2;
   return hata;
 }
 
-bool on(){
+bool onbos(){
   on_uz = S1.distance();
-  if(on_uz>4)return false;
-  else return true;
+  if(on_uz>15)return true;
+  else return false;
   
 }
-bool sag(){
-  sag_uz = S2.distance();
-  if(sag_uz>4)return false;
-  else return true;
+bool sagbos(int sag_uz){
+  if(sag_uz>15)return true;
+  else{
+    return false;
+  }
 }
-bool sol(){
-  sol_uz = S3.distance();
-  if(sol_uz>4)return false;
-  else return true;
+bool solbos(int sol_uz){
+  if(sol_uz>15)return true;
+  else return false;
 }
