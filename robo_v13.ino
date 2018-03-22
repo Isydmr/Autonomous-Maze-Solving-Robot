@@ -166,11 +166,13 @@ void duz_git(int tekrar){
   d_sol=S1.getDistance()-8;
   d_sag=S3.getDistance()-8;
   d_on =S2.getDistance();
+  if(d_sol > 5) d_sol = 5;
+  if(d_sag > 5) d_sag = 5;
   mesafeyaz();
   //delay(200);
     cosku_sol=170;
    cosku_sag=235;
-  int p = 1;
+  int p = 3;
   int hata = mesafe_hata(d_sol,d_sag);
   //Serial.print("hata:");
   //Serial.println(hata);
@@ -254,6 +256,7 @@ int  on_uz = S2.getDistance();
 }
 bool sagbos(){
   int sag_uz=S3.getDistance()-8;
+  if(sag_uz == 1) sag_uz = 30; 
   if(sag_uz> 5 )return true;
   else{
     return false;
@@ -261,7 +264,7 @@ bool sagbos(){
 }
 bool solbos(){
   int sol_uz = S1.getDistance()-8;
-  
+  if(sol_uz == 1) sol_uz = 30;
   if(sol_uz > 5)return true;
   else return false;
 }
@@ -276,4 +279,3 @@ Serial.println(d_on);
 Serial.println("-----------");
 
 }
-
