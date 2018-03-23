@@ -1,4 +1,4 @@
-#include <PID_v1.h>
+//#include <PID_v1.h>
 #include <SharpIR.h>
 
 #define SAGHIZ  6
@@ -11,7 +11,7 @@
 #define GERI LOW
 
 #define ENCSOL 3
-#define ENCSAG  2
+#define ENCSAG 2
 
 #define DUZGIT 0
 #define SOLADON 1
@@ -47,24 +47,15 @@ void loop() {
 
 
   while (rcs) {
+    Serial.println("Once:");
     Serial.println(enc_sag);
     Serial.println(enc_sol);
     Serial.println("------------\n\n");
-    switch (istikamet) {
-      case DUZGIT :
-//        birkareilerle(3);
-        break;
-      case SOLADON :
-        soladon(3);
-        break;
-      case SAGADON :
-        //      sagadon();
-        break;
-      case GERIDON :
-        //      geridon();
-        break;
-    }
-    //9volt adaptor için yaklasık 17 cm
+    sagadon(4);
+    Serial.println("Sonra:");
+    Serial.println(enc_sag);
+    Serial.println(enc_sol);
+    Serial.println("------------\n\n");
   }
   control();
 
