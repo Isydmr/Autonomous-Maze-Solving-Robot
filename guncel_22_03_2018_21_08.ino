@@ -1,3 +1,9 @@
+/* !eklenecek! 
+-kapali yola girme yani -1 yap
+-eger bir yol ayrimdan cıkmaz olmadan baskasına ugrarsa o zaman stackten cekip ona gitmeye çalış(-- yaparak)
+-bir cikmaz buldugunda ayrim noktasindaki diger gitmedigin ayrimlara gitmen lazım.
+*/
+
 // YONLER
 #define KUZEY 0
 #define DOGU 1
