@@ -35,25 +35,8 @@ void setup(){
 }
 
 void loop(){
-  
-  Serial.println("Sag tik:");
-  Serial.println(sag_tik);
-  cosku_sol=250;
-  cosku_sag=250;
-  yon_sag=ILERI;
-  yon_sol=ILERI;
-  Serial.println("Sol tik:");  Serial.println(sol_tik);
-  Serial.println("-------------");
-  if(sag_tik>100){
-    cosku_sol=0;
-    cosku_sag=0;
-  }
-  digitalWrite(SOLM, yon_sol);
-  digitalWrite(SAGM, yon_sag);
-  sag_tik=0;
-  analogWrite(SOLHIZ, cosku_sol);
-  analogWrite(SAGHIZ, cosku_sag);
-      delay(1000);
+  birkare();
+ 
 
   
 }
@@ -63,6 +46,32 @@ void enc_tik_sag() {
 
 void enc_tik_sol() {
   sol_tik++;
+}
+void birkare(){
+  yon_sag=GERI;
+  yon_sol=ILERI;
+  sol_tik=0;
+  sag_tik=0;
+  cosku_sol=60;
+  while(sag_tik < 20 ){
+    cosku_sag=60;
+    digitalWrite(SAGM, yon_sag);
+    analogWrite(SAGHIZ, cosku_sag);
+    digitalWrite(SOLM, yon_sol);
+    analogWrite(SOLHIZ, cosku_sol);
+    if(sol_tik==20)break;
+  }
+  
+  while(sol_tik < 20 ){
+    cosku_sol=60;
+    
+  }
+  
+  if(sag_tik==20) 
+  if(sol_tik==20) cosku_sol=0;
+
+  
+  delay(50);
 }
 /*
 void enc_tik_sag_geri() {
