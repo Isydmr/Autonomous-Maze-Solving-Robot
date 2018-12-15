@@ -36,32 +36,20 @@ struct Robot {
 } robot;
 
 struct cell {
-//  byte duvarlar[4]; // YUKARIDAKI DEFINE LARA GORE GIDIYOR
+  byte duvarlar[4]; // Definelara göre gidiyor
   byte deger;
   bool visited = false;
-  // buraya flood fill sayıları da gelecek;
 };
 
-struct cell labirent[16][16];   //labirent[X][Y] // NORMALIN NEREDEYSE IKI KATI
-/*YOL AYRIMI */
-
-int yolayrim[STACKBUYUKLUGU];  // Yol ayrimlarini tutcaz
+struct cell labirent[16][16];   
+int yolayrim[STACKBUYUKLUGU];  // Yol ayrimlari
 
 int d, d_sol, d_sag, d_on, on = 0;
-
-
-/*YOL AYRIMI */
-/* */
-//void()
-
-
-
 int sayac = 0;
-
 int sensorpin = 0;                // analog pin used to connect the sharp sensor
 int onMesafe = 0;                 // variable to store the values from sensor(initially zero)
-int cosku_sol = 0;
-int cosku_sag = 0;
+int pwm_sol = 0;
+int pwm_sag = 0;
 int on_uz = 0;
 int sag_uz = 0;
 int sol_uz = 0;
@@ -76,8 +64,8 @@ void setup() {
   kutudegeri = 1;
   initLabirent();
   robot.yon = KUZEY;  // KUZEYE BAKIYORUZ
-  robot.x = 0; // SOLUMUZDA DA SAGIMIZDA DA LABIRENT OLABILIR
-  robot.y = 0; // ARKAMIZDA LABIRENT OLMASI MUMKUN DEGIL
+  robot.x = 0;        // SOLUMUZDA DA SAGIMIZDA DA LABIRENT OLABILIR
+  robot.y = 0;        // ARKAMIZDA LABIRENT OLMASI MUMKUN DEGIL
 
   labirent[robot.x][robot.y].visited = true;
   labirent[robot.x][robot.y].deger = kutudegeri;
@@ -392,8 +380,6 @@ void loop() {
         case DOGU:
         }*/
     }
-
-
     duz_git(30); //bir kare git
     labirent[robot.x][robot.y].deger = kutudegeri;
     //loopun bitişi
@@ -438,29 +424,29 @@ void duz_git(int tekrar) {
     if (d_sag > 5) d_sag = 5;
     mesafeyaz();
     //delay(200);
-    cosku_sol = 170;
-    cosku_sag = 235;
+    pwm_sol = 170;
+    pwm_sag = 235;
     int p = 3;
     int hata = mesafe_hata();
     //Serial.print("hata:");
     //Serial.println(hata);
     if (hata > 1) {
-      //    cosku_sol = cosku_sol - p*hata;
+      //    pwm_sol = pwm_sol - p*hata;
       for (int i = 0; i < hata * p ; i++) {
-        cosku_sol--;
+        pwm_sol--;
         ilerigit();
       }
-      //Serial.println("sol cosku:");
-      //Serial.println(cosku_sol);
+      //Serial.println("sol pwm:");
+      //Serial.println(pwm_sol);
     } else if (hata < -1)
     {
-      //    cosku_sag = cosku_sag + p*hata;
+      //    pwm_sag = pwm_sag + p*hata;
       for (int i = 0; i < ((-1 * hata)*p); i++) {
-        cosku_sag--;
+        pwm_sag--;
         ilerigit();
       }
-      //Serial.println("sag cosku:");
-      //Serial.println(cosku_sag);
+      //Serial.println("sag pwm:");
+      //Serial.println(pwm_sag);
     }
     else {
       ilerigit();
@@ -476,8 +462,8 @@ void ilerigit() {
   digitalWrite(SOLM, yon_sol);
   digitalWrite(SAGM, yon_sag);
 
-  analogWrite(SOLHIZ, cosku_sol);
-  analogWrite(SAGHIZ, cosku_sag);
+  analogWrite(SOLHIZ, pwm_sol);
+  analogWrite(SAGHIZ, pwm_sag);
   delay(100);
   dur(100);
 }
@@ -486,8 +472,8 @@ void soladon() {
   digitalWrite(SOLM, yon_sol);
   digitalWrite(SAGM, yon_sag);
 
-  analogWrite(SOLHIZ, cosku_sol);
-  analogWrite(SAGHIZ, cosku_sag);
+  analogWrite(SOLHIZ, pwm_sol);
+  analogWrite(SAGHIZ, pwm_sag);
   delay(370);
   SolaDonduk();
   yon_sol = !yon_sol;
@@ -498,8 +484,8 @@ void sagadon() {
   digitalWrite(SOLM, yon_sol);
   digitalWrite(SAGM, yon_sag);
 
-  analogWrite(SOLHIZ, cosku_sol);
-  analogWrite(SAGHIZ, cosku_sag);
+  analogWrite(SOLHIZ, pwm_sol);
+  analogWrite(SAGHIZ, pwm_sag);
   delay(365);
 
   SagaDonduk();
@@ -511,8 +497,8 @@ void geridon() {
   digitalWrite(SOLM, yon_sol);
   digitalWrite(SAGM, yon_sag);
 
-  analogWrite(SOLHIZ, cosku_sol);
-  analogWrite(SAGHIZ, cosku_sag);
+  analogWrite(SOLHIZ, pwm_sol);
+  analogWrite(SAGHIZ, pwm_sag);
   delay(720);
   SagaDonduk(); SagaDonduk();
   yon_sag = !yon_sag;
